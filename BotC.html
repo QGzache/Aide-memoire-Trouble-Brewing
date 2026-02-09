@@ -1,0 +1,117 @@
+ca ne marche tjrs pas... j'ai corrige les erreurs dans la description des roles aussi. : <!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche Rôle — Blood on the Clocktower</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top,#1b1b2f,#0f0f17);color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{width:100%;max-width:420px}
+.card{background:linear-gradient(145deg,#1f1f2e,#14141f);border-radius:20px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08);text-align:center}
+.role-image{width:120px;height:120px;margin:0 auto 15px;display:flex;align-items:center;justify-content:center}
+.role-image img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 0 10px rgba(0,0,0,.8))}
+.titre{font-family:'Cinzel',serif;font-size:30px;margin-bottom:5px}
+.equipe{font-size:14px;margin-bottom:20px;opacity:.9}
+.bloc{background:rgba(255,255,255,.05);border-radius:12px;padding:15px;margin-bottom:15px;border:1px solid rgba(255,255,255,.06);text-align:left}
+.bloc h3{margin:0 0 8px;font-size:14px;text-transform:uppercase;opacity:.7}
+select{width:100%;padding:12px;margin-bottom:20px;border-radius:10px;border:none;background:#0f0f17;color:white;font-size:15px;border:1px solid rgba(255,255,255,.15)}
+.townfolk{color:#4fc3f7}.outsider{color:#ffb74d}.minion{color:#ba68c8}.demon{color:#ef5350}
+.footer{text-align:center;font-size:12px;opacity:.6;margin-top:10px}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<select id="roleSelect"></select>
+
+<div class="card">
+
+<div class="role-image">
+<img id="roleImg" src="images/Villageois/Icon_Empath.png">
+</div>
+
+<div class="titre" id="roleNom"></div>
+<div class="equipe" id="equipe"></div>
+
+<div class="bloc">
+<h3>Pouvoir</h3>
+<div id="pouvoir"></div>
+</div>
+
+<div class="bloc">
+<h3>Moment d’activation</h3>
+<div id="timing"></div>
+</div>
+
+</div>
+
+<div class="footer">Fiche rappel — Trouble Brewing</div>
+</div>
+
+<script>
+
+const roles={
+
+// ===== VILLAGEOIS =====
+"Empathe":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Empath.png",pouvoir:"Apprends combien de tes voisins directs sont Mauvais.",timing:"Chaque nuit"},
+"Voyante":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_FortuneTeller.png",pouvoir:"Choisis 2 joueurs : tu apprends si l’un est le Démon.",timing:"Chaque nuit"},
+"Moine":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Monk.png",pouvoir:"Protège un joueur de l'attaque du Démon la nuit (autre que toi).",timing:"Chaque nuit"},
+"Soldat":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Soldier.png",pouvoir:"Tu ne peux pas mourrir par l'attaque nocturne du démon.",timing:"Passif"},
+"Sentinelle":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Slayer.png",pouvoir:"Une fois dans la partie, tente de tirer sur un joueur. S'il est Mauvais, il meurt.",timing:"Jour"},
+"Maire":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Mayor.png",pouvoir:"S'il reste 3 joueurs dont toi et qu'il n'y a pas d'execution le même jour, le village gagne. + Si tu meurs la nuit, le maitre du jeu peut decider de tuer un autre joueur du village à ta place.",timing:"Passif"},
+"Chef":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Chef.png",pouvoir:"Au début de la partie, tu apprend combien de paires*  de mauvais joueurs il y a. * une paire signifie deux joueurs côtes à côtes.",timing:"Début"},
+"Bibliothécaire":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Librarian.png",pouvoir:"Au début de la partie, tu vois 2 joueurs. L'un d'entre eux est un rôle spécifique Etranger.",timing:"Début"},
+"Lavandière":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Washerwoman.png",pouvoir:"Au début de la partie, tu vois 2 joueurs. L'un d'entre eux est  un rôle spécifique villageois.",timing:"Début"},
+"Enquêteur":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Investigator.png",pouvoir:"Au début de la partie, tu vois 2 joueurs. L'un d'entre eux est un role spécifique  sbire.",timing:"Début"},
+"Vierge":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Virgin.png",pouvoir:"Un Villageois meurt s’il te nomme.",timing:"Jour"},
+"Croque-mort":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Undertaker.png",pouvoir:"Voit le rôle de la personne morte par le vote.",timing:"Chaque nuit"},
+"Gardien du Corbeau":{equipe:"Villageois",classe:"townfolk",img:"images/Villageois/Icon_Ravenkeeper.png",pouvoir:"Voit un rôle en mourant durant la nuit.",timing:"Mort"},
+
+// ===== ÉTRANGERS =====
+"Ivrogne":{equipe:"Étranger",classe:"outsider",img:"images/Etranger/Icon_Drunk.png",pouvoir:"Tu crois être un autre rôle . Si tu pense être un rôle à info, tu reçoit des informations erronnées; sinon ton pouvoir n'a aucun effet.",timing:"Passif"},
+"Reclus":{equipe:"Étranger",classe:"outsider",img:"images/Etranger/Icon_Recluse.png",pouvoir:"Peut apparaître Mauvais aux rôles à infos.",timing:"Passif"},
+"Saint":{equipe:"Étranger",classe:"outsider",img:"images/Etranger/Icon_Saint.png",pouvoir:"Si exécuté par le vote, les Mauvais gagnent.",timing:"Passif"},
+"Majordome":{equipe:"Étranger",classe:"outsider",img:"images/Etranger/Icon_Butler.png",pouvoir:"Chaque nuit, choisit un maître. Tu dois voter avec cette personne au vote du jour suivant.",timing:"Jour"},
+
+// ===== SBIRES =====
+"Baron":{equipe:"Sbire",classe:"minion",img:"images/Sbire/Icon_Baron.png",pouvoir:"Ajoute des Étrangers dans la composition avant la partie.",timing:"Setup"},
+"Empoisonneur":{equipe:"Sbire",classe:"minion",img:"images/Sbire/Icon_Poisoner.png",pouvoir:"Empoisonne un joueur chaque nuit. Son pouvoir ne fait plus rien et ses informations sont erronnées pour la nuit et la journée qui suit.",timing:"Chaque nuit"},
+"Femme Écarlate":{equipe:"Sbire",classe:"minion",img:"images/Sbire/Icon_ScarletWoman.png",pouvoir:"Devient Démon s'il reste au moins 5 joueurs au moment de la mort de ce dernier.",timing:"Passif"},
+"Espion":{equipe:"Sbire",classe:"minion",img:"images/Sbire/Icon_Spy.png",pouvoir:"Voit le Grimoire.",timing:"Chaque nuit"},
+
+// ===== DÉMON =====
+"Diablotin":{equipe:"Démon",classe:"demon",img:"images/Demon/Icon_Imp.png",pouvoir:"Tue chaque nuit.",timing:"Chaque nuit"}
+};
+
+const select=document.getElementById("roleSelect");
+
+for(const r in roles){
+ const opt=document.createElement("option");
+ opt.value=r;
+ opt.textContent=r;
+ select.appendChild(opt);
+}
+
+function updateRole(){
+ const r=roles[select.value];
+ roleNom.textContent=select.value;
+ equipe.textContent=r.equipe;
+ equipe.className="equipe "+r.classe;
+ pouvoir.textContent=r.pouvoir;
+ timing.textContent=r.timing;
+ roleImg.src=r.img;
+}
+
+select.addEventListener("change",updateRole);
+select.selectedIndex=0;
+updateRole();
+
+</script>
+
+</body>
+</html>
